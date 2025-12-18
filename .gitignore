@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+
+# Local runs / artifacts (kept out of git by default)
+.council/artifacts/
+.council/tmp/
+
+# Beads database is local state; JSONL is the sharable artifact.
+.beads/*.db
+.beads/*.db-*
+.beads/bd.sock
+.beads/daemon.*
+.beads/beads.left.*
+.beads/.local_version

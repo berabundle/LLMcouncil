@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent",
+    "round",
+    "phase",
+    "summary",
+    "recommendations",
+    "risks",
+    "open_questions",
+    "need_another_round",
+    "chair_score",
+    "chair_reason",
+    "artifacts"
+  ],
+  "properties": {
+    "agent": { "type": "string", "minLength": 1 },
+    "round": { "type": "integer", "minimum": 1 },
+    "phase": { "type": "string", "enum": ["research", "critique", "synthesis", "oracle"] },
+    "summary": { "type": "string" },
+    "recommendations": { "type": "array", "items": { "type": "string" } },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "open_questions": { "type": "array", "items": { "type": "string" } },
+    "need_another_round": { "type": "boolean" },
+    "why_continue": { "type": "string" },
+    "chair_score": { "type": "number", "minimum": 0, "maximum": 10 },
+    "chair_reason": { "type": "string" },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "title", "content"],
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "content": { "type": "string" },
+          "mime": { "type": "string" },
+          "suggested_filename": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+
