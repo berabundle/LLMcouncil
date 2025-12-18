@@ -1,4 +1,7 @@
 import { execa } from "execa";
+import fs from "node:fs/promises";
+import path from "node:path";
+import crypto from "node:crypto";
 
 async function bd(args: string[], input?: string): Promise<{ stdout: string }> {
   const res = await execa("bd", args, { input, stdout: "pipe", stderr: "pipe" });
@@ -23,7 +26,15 @@ export async function beadsCreateIssue(params: {
 }
 
 export async function beadsAddComment(issueId: string, text: string): Promise<void> {
-  await bd(["comments", "add", issueId, text]);
+  const tmpDir = path.join(".council", "tmp");
+  await fs.mkdir(tmpDir, { recursive: true });
+  const tmpPath = path.join(tmpDir, `beads-comment-${Date.now()}-${crypto.randomBytes(4).toString("hex")}.md`);
+  await fs.writeFile(tmpPath, text, "utf8");
+  try {
+    await bd(["comments", "add", issueId, "-f", tmpPath]);
+  } finally {
+    await fs.unlink(tmpPath).catch(() => undefined);
+  }
 }
 
 export async function beadsListComments(issueId: string): Promise<unknown> {

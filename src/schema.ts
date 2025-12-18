@@ -4,8 +4,8 @@ export const ArtifactSchema = z.object({
   type: z.string().min(1),
   title: z.string().min(1),
   content: z.string(),
-  mime: z.string().optional(),
-  suggested_filename: z.string().optional(),
+  mime: z.string().optional().default(""),
+  suggested_filename: z.string().optional().default(""),
 });
 
 export type Artifact = z.infer<typeof ArtifactSchema>;
@@ -42,6 +42,7 @@ export function agentResponseJsonSchemaString(): string {
       "risks",
       "open_questions",
       "need_another_round",
+      "why_continue",
       "chair_score",
       "chair_reason",
       "artifacts",
@@ -63,7 +64,7 @@ export function agentResponseJsonSchemaString(): string {
         items: {
           type: "object",
           additionalProperties: false,
-          required: ["type", "title", "content"],
+          required: ["type", "title", "content", "mime", "suggested_filename"],
           properties: {
             type: { type: "string", minLength: 1 },
             title: { type: "string", minLength: 1 },
@@ -76,4 +77,3 @@ export function agentResponseJsonSchemaString(): string {
     },
   });
 }
-

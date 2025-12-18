@@ -11,6 +11,7 @@
     "risks",
     "open_questions",
     "need_another_round",
+    "why_continue",
     "chair_score",
     "chair_reason",
     "artifacts"
@@ -32,7 +33,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["type", "title", "content"],
+        "required": ["type", "title", "content", "mime", "suggested_filename"],
         "properties": {
           "type": { "type": "string", "minLength": 1 },
           "title": { "type": "string", "minLength": 1 },
@@ -44,4 +45,3 @@
     }
   }
 }
-

@@ -24,6 +24,8 @@ export const runCodex: ProviderRun = async ({ agentName, round, phase, prompt, t
     `You are council agent: ${agentName}.`,
     `Return ONLY valid JSON matching the provided JSON Schema.`,
     `Set: agent="${agentName}", round=${round}, phase="${phase}".`,
+    `Important: Always include "why_continue" (use "" if none).`,
+    `Important: Every artifact MUST include "mime" and "suggested_filename" (use "" if unknown).`,
     "",
     providerProfilesForPrompt(),
     "",
