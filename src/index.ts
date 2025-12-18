@@ -45,11 +45,15 @@ program
   .command("consult")
   .argument("<prompt...>", "User prompt for the council")
   .option("--max-rounds <n>", "Maximum rounds before stopping", "5")
-  .action(async (promptParts: string[], opts: { maxRounds: string }) => {
+  .option("--heartbeat-seconds <n>", "Print a heartbeat while a provider runs (0 disables)", "15")
+  .action(async (promptParts: string[], opts: { maxRounds: string; heartbeatSeconds: string }) => {
     await ensureDirs();
     const prompt = promptParts.join(" ").trim();
     const maxRounds = Number.parseInt(opts.maxRounds, 10);
     if (!Number.isFinite(maxRounds) || maxRounds <= 0) throw new Error("--max-rounds must be a positive integer");
+    const heartbeatSeconds = Number.parseInt(opts.heartbeatSeconds, 10);
+    if (!Number.isFinite(heartbeatSeconds) || heartbeatSeconds < 0)
+      throw new Error("--heartbeat-seconds must be an integer >= 0");
 
     const issueId = await beadsCreateIssue({
       title: prompt.length > 80 ? `${prompt.slice(0, 77)}...` : prompt,
@@ -61,8 +65,12 @@ program
     // Print issue id for quick linking / continuing.
     // eslint-disable-next-line no-console
     console.log(issueId);
+    // eslint-disable-next-line no-console
+    console.error(`[council] Session: ${issueId}`);
+    // eslint-disable-next-line no-console
+    console.error(`[council] Watch: bd comments ${issueId} (or: watch -n 1 'bd comments ${issueId} | tail -n 80')`);
 
-    await runCouncilSession({ issueId, prompt, maxRounds });
+    await runCouncilSession({ issueId, prompt, maxRounds, heartbeatSeconds });
   });
 
 program.parseAsync(process.argv).catch((err: unknown) => {
