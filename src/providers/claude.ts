@@ -2,6 +2,7 @@ import { execa } from "execa";
 import { AgentResponseSchema, agentResponseJsonSchemaString } from "../schema.js";
 import { extractFirstJsonObject, tryParseJson } from "../util/json.js";
 import type { ProviderRun } from "./types.js";
+import { providerProfilesForPrompt } from "./profiles.js";
 
 export const runClaude: ProviderRun = async ({ agentName, round, phase, prompt, transcript }) => {
   const schema = agentResponseJsonSchemaString();
@@ -9,6 +10,8 @@ export const runClaude: ProviderRun = async ({ agentName, round, phase, prompt, 
     `You are council agent: ${agentName}.`,
     `Return ONLY valid JSON matching the provided JSON Schema.`,
     `Set: agent="${agentName}", round=${round}, phase="${phase}".`,
+    "",
+    providerProfilesForPrompt(),
     "",
     "=== User Prompt ===",
     prompt,
@@ -32,4 +35,3 @@ export const runClaude: ProviderRun = async ({ agentName, round, phase, prompt, 
   const parsed = AgentResponseSchema.parse(extracted);
   return { raw, parsed };
 };
-

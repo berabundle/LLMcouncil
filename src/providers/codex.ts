@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { AgentResponseSchema } from "../schema.js";
 import { extractFirstJsonObject, tryParseJson } from "../util/json.js";
 import type { ProviderRun } from "./types.js";
+import { providerProfilesForPrompt } from "./profiles.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,8 @@ export const runCodex: ProviderRun = async ({ agentName, round, phase, prompt, t
     `You are council agent: ${agentName}.`,
     `Return ONLY valid JSON matching the provided JSON Schema.`,
     `Set: agent="${agentName}", round=${round}, phase="${phase}".`,
+    "",
+    providerProfilesForPrompt(),
     "",
     "=== User Prompt ===",
     prompt,
