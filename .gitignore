@@ -9,6 +9,7 @@ dist/
 .council/tmp/
 
 # Beads database is local state; JSONL is the sharable artifact.
+.beads/
 .beads/*.db
 .beads/*.db-*
 .beads/bd.sock
