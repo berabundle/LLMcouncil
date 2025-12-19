@@ -8,14 +8,20 @@ dist/
 .council/artifacts/
 .council/tmp/
 
-# Beads database is local state; JSONL is the sharable artifact.
-.beads/
+# Beads databases are local state; JSONL exports are the sharable artifacts.
 .beads/*.db
 .beads/*.db-*
 .beads/bd.sock
 .beads/daemon.*
 .beads/beads.left.*
 .beads/.local_version
+
+.council/.beads/*.db
+.council/.beads/*.db-*
+.council/.beads/bd.sock
+.council/.beads/daemon.*
+.council/.beads/beads.left.*
+.council/.beads/.local_version
 
 # bv (beads viewer) local config and caches
 .bv/

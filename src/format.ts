@@ -15,19 +15,21 @@ export function formatAgentComment(params: {
   lines.push(`**Agent**: \`${mdEscape(response.agent)}\`  **Provider**: \`${provider}\``);
   lines.push(`**Round**: \`${response.round}\`  **Phase**: \`${response.phase}\``);
   lines.push("");
-  lines.push("**Summary**");
-  lines.push(mdEscape(response.summary) || "(empty)");
-  lines.push("");
-  lines.push("**Recommendations**");
-  lines.push(response.recommendations.length ? response.recommendations.map((r) => `- ${mdEscape(r)}`).join("\n") : "- (none)");
-  lines.push("");
-  lines.push("**Risks**");
-  lines.push(response.risks.length ? response.risks.map((r) => `- ${mdEscape(r)}`).join("\n") : "- (none)");
-  lines.push("");
-  lines.push("**Open Questions**");
-  lines.push(
-    response.open_questions.length ? response.open_questions.map((q) => `- ${mdEscape(q)}`).join("\n") : "- (none)",
-  );
+
+  lines.push(mdEscape(response.message).trim() || "(empty)");
+
+  if (response.questions_for_user.length) {
+    lines.push("");
+    lines.push("**Questions For User**");
+    lines.push(response.questions_for_user.map((q) => `- ${mdEscape(q)}`).join("\n"));
+  }
+
+  if (response.assumptions.length) {
+    lines.push("");
+    lines.push("**Assumptions**");
+    lines.push(response.assumptions.map((a) => `- ${mdEscape(a)}`).join("\n"));
+  }
+
   lines.push("");
   lines.push(`**Chair Score**: \`${response.chair_score}\` — ${mdEscape(response.chair_reason)}`);
   lines.push(`**Continue?**: \`${response.need_another_round ? "CONTINUE" : "DONE"}\` ${mdEscape(response.why_continue ?? "")}`);
@@ -42,4 +44,3 @@ export function formatAgentComment(params: {
 
   return lines.join("\n");
 }
-
