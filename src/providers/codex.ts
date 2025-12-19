@@ -2,7 +2,7 @@ import { execa } from "execa";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { AgentResponseSchema } from "../schema.js";
+import { parseAgentResponse } from "../schema.js";
 import { extractFirstJsonObject, tryParseJson } from "../util/json.js";
 import type { ProviderRun } from "./types.js";
 import { providerProfilesForPrompt } from "./profiles.js";
@@ -14,21 +14,27 @@ function repoRootFromHere(): string {
   return path.resolve(__dirname, "..", "..");
 }
 
-export const runCodex: ProviderRun = async ({ agentName, round, phase, prompt, transcript }) => {
+export const runCodex: ProviderRun = async ({ agentName, round, phase, prompt, transcript, repoContext, timeoutMs }) => {
   const repoRoot = repoRootFromHere();
   const schemaPath = path.join(repoRoot, ".council", "schema", "agent_response.schema.json");
   const tmpDir = path.join(repoRoot, ".council", "tmp");
   const lastMessagePath = path.join(tmpDir, `codex-last-${Date.now()}-${Math.random().toString(16).slice(2)}.txt`);
 
+  const repoBlock = repoContext?.trim() ? [repoContext.trim(), ""] : [];
+
   const fullPrompt = [
     `You are council agent: ${agentName}.`,
     `Return ONLY valid JSON matching the provided JSON Schema.`,
     `Set: agent="${agentName}", round=${round}, phase="${phase}".`,
+    `Use "message" for your discussion. Keep it concise and specific.`,
+    `If you need user input, set "questions_for_user" to a non-empty array.`,
+    `If you proceed without user input, capture assumptions in "assumptions".`,
     `Important: Always include "why_continue" (use "" if none).`,
     `Important: Every artifact MUST include "mime" and "suggested_filename" (use "" if unknown).`,
     "",
     providerProfilesForPrompt(),
     "",
+    ...repoBlock,
     "=== User Prompt ===",
     prompt,
     "",
@@ -51,7 +57,7 @@ export const runCodex: ProviderRun = async ({ agentName, round, phase, prompt, t
       "--skip-git-repo-check",
       fullPrompt,
     ],
-    { stdout: "pipe", stderr: "pipe" },
+    { stdin: "ignore", stdout: "pipe", stderr: "pipe", timeout: timeoutMs },
   );
 
   const rawText = String(await fs.readFile(lastMessagePath, "utf8").catch(() => res.stdout)).trim();
@@ -59,6 +65,6 @@ export const runCodex: ProviderRun = async ({ agentName, round, phase, prompt, t
   const extracted = direct ?? extractFirstJsonObject(rawText);
   if (!extracted) throw new Error(`Codex output was not JSON.\n${rawText}`);
 
-  const parsed = AgentResponseSchema.parse(extracted);
+  const parsed = parseAgentResponse(extracted);
   return { raw: rawText, parsed };
 };

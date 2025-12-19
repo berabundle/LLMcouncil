@@ -8,5 +8,6 @@ export type ProviderRun = (params: {
   phase: AgentResponse["phase"];
   prompt: string;
   transcript: string;
+  repoContext?: string;
+  timeoutMs?: number;
 }) => Promise<{ raw: string; parsed: AgentResponse }>;
-
