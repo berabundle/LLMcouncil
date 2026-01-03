@@ -271,3 +271,5 @@ git push                # Push to remote
 - Always `bd sync` before ending session
 
 <!-- end-bv-agent-instructions -->
+
+Note: Use `~` for home paths instead of usernames (for example `~/Projects/...`).
